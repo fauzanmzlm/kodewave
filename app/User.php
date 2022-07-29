@@ -10,6 +10,12 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    public const ROLE_ADMIN = 1;
+    public const ROLE_USER = 2;
+
+    public const STATUS_COMPLETE = 1;
+    public const STATUS_DRAFT = 2;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -36,4 +42,30 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Return list of status codes and labels
+
+     * @return array
+     */
+    public static function roles()
+    {
+        return [
+            self::ROLE_ADMIN => 'Admin',
+            self::ROLE_USER => 'User',
+        ];
+    }
+
+    /**
+     * Return list of status codes and labels
+
+     * @return array
+     */
+    public static function statuses()
+    {
+        return [
+            self::STATUS_COMPLETE => 'Completed',
+            self::STATUS_DRAFT => 'Draft',
+        ];
+    }
 }
