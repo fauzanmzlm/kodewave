@@ -22,7 +22,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'role'
     ];
 
     /**
@@ -67,5 +67,20 @@ class User extends Authenticatable
             self::STATUS_COMPLETE => 'Completed',
             self::STATUS_DRAFT => 'Draft',
         ];
+    }
+
+    public function todo_lists()
+    {
+        return $this->hasMany(TodoList::class);
+    }
+
+    public function scopeTotalAdmin($query)
+    {
+        return $query->where('role', self::ROLE_ADMIN)->count();
+    }
+
+    public function scopeTotalUser($query)
+    {
+        return $query->where('role', self::ROLE_USER)->count();
     }
 }

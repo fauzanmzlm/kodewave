@@ -14,4 +14,9 @@ class TodoList extends Model
     protected $fillable = [
         'body', 'is_complete', 'user_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -18,32 +18,49 @@ class UsersTableSeeder extends Seeder
         // init faker
         $faker = Faker::create();
 
-        // register admin
-        User::create([
-            'name' => $faker->name,
-            'email' => $faker->email,
-            'password' => Hash::make('password'),
-            'role' => User::ROLE_ADMIN,
-        ]);
+        // // register admin
+        // User::create([
+        //     'name' => $faker->name,
+        //     'email' => $faker->email,
+        //     'password' => Hash::make('password'),
+        //     'role' => User::ROLE_ADMIN,
+        // ]);
 
-        // register user
-        User::create([
-            'name' => $faker->name,
-            'email' => $faker->email,
-            'password' => Hash::make('password'),
-            'role' => User::ROLE_USER,
-        ]);
+        // // register user
+        // User::create([
+        //     'name' => $faker->name,
+        //     'email' => $faker->email,
+        //     'password' => Hash::make('password'),
+        //     'role' => User::ROLE_USER,
+        // ]);
 
-        // seed todolist
-        $statuses = User::statuses();
-        $sar = array_rand($statuses);
-        $rsar = $statuses[$sar];
-        for($i=0;$i<10;$i++) {
-            TodoList::create([
-                'user_id' => User::inRandomOrder()->first()->id,
-                'body' => $faker->sentence(5),
-                'is_complete' => $faker->sentence(5),
+        // // seed todolist
+        // $statuses = User::statuses();
+        // $sar = array_rand($statuses);
+        // $rsar = $statuses[$sar];
+        // for($i=0;$i<10;$i++) {
+        //     TodoList::create([
+        //         'user_id' => User::inRandomOrder()->first()->id,
+        //         'body' => $faker->sentence(5),
+        //         'is_complete' => $faker->sentence(5),
+        //     ]);
+        // }
+
+        for($i=0;$i<20;$i++) {
+            $user = User::create([
+                'name' => $faker->name,
+                'email' => $faker->safeEmail,
+                'role' => 'Administrator',
+                'password' => Hash::make('password'),
             ]);
+
+            $todo_list_random_loop = rand(1,4);
+            for($k=0;$k<$todo_list_random_loop;$k++) {
+                $user->todo_lists()->create([
+                    'body' => $faker->sentence(5),
+                    'is_complete' => rand(1,2),
+                ]);
+            }
         }
     }
 }
