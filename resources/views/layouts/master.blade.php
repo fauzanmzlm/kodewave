@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title') &mdash; MyTodo</title>
 
     <!-- Favicon -->
@@ -56,7 +57,14 @@
             </div>
 
             <!-- Footer -->
-            @include('partials.footer')
+            <footer class="main-footer">
+                <div class="footer-left">
+                    @include('partials.copyright')
+                </div>
+                <div class="footer-right">
+                    v1.0
+                </div>
+            </footer>
         </div>
     </div>
 

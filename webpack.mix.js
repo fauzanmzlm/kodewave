@@ -27,4 +27,5 @@ mix.scripts([
     'public/stisla/assets/js/custom.js',
     'public/stisla/modules/jquery-selectric/jquery.selectric.min.js',
     'public/stisla/modules/toastr/toastr-2.1.4/build/toastr.min.js',
+    'public/js/helpers.js',
 ], 'public/js/app.js').version();

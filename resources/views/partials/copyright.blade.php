@@ -1,0 +1,1 @@
+Copyright  &copy; {{ date('Y') }} <div class="bullet"></div> <a href="{{ env('APP_URL') }}">{{ env('APP_NAME') }}</a>
