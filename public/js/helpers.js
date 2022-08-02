@@ -12,14 +12,14 @@ function ajaxFailHandler(jqXHR, textStatus, errorThrown) {
     if (jqXHR.status === 0) {
         problem = "Not connect. Verify etwork.";
     } else if (jqXHR.status == 401) {
-        toastr.error('Session Expired','Error');
+        toastr.error('Unauthorized','Error');
         return false;
     } else if (jqXHR.status == 404) {
         problem = "Resource not found.";
     } else if (jqXHR.status == 409) {
         problem = "Conflict.";
     } else if (jqXHR.status == 419) {
-        toastr.error('Session Expired','Error');
+        toastr.error('Unauthorized','Error');
         return false;
     } else if (jqXHR.status === 422 ) {
         var errors = JSON.parse(jqXHR.responseText);

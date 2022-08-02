@@ -138,7 +138,8 @@
     </section>
 
     <!-- Modal -->
-    <div class="modal fade" id="editTodoModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal fade" id="editTodoModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -166,18 +167,27 @@
 @endsection
 
 @section('scripts')
-
     <script type="text/javascript">
-
         $(document).ready(function() {
 
             let user_id = "{{ auth()->user()->id }}";
-            let token = "3243";
+            let token =
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiM2VkMjNkMjk3YmYyNmNhZmE5NDZlMjhjNjA4NjZhMDUwZDk1ZWUyYzVkNjIyYWYyOTFmYjg4ZjExZDBlNzdhZjY3YWM5M2VkMGJlZmUwYjgiLCJpYXQiOjE2NTkzOTY4NDEsIm5iZiI6MTY1OTM5Njg0MSwiZXhwIjoxNjkwOTMyODQwLCJzdWIiOiIyMCIsInNjb3BlcyI6W119.cw-KaOVPic7zOLAU7xrJCFTvegB6JT2D-PPjDvAK5Jju3p_ZlNF5jCGcJhcuzlxJZS6Qo9G-tKmFlNvFEvecrJYQK_90qf08pyoFbNc_NYWLWSUe_Ncv0hXtT_7_V6UkWhe59q2Kla-BWpaQt0EmLvP_yShyI2ogkHvMK9SSQsRGIlsK0qUV11hXiNUs1JeMylULFHMRFlU1mVzrOU4JplBAtzsZ7ZUplkB1GspDH5sWq8hmgv7zYYhVhEew2dmOmbYCJ26rNXd95O2wv2wneyrxZFt0FMarAx2_1WPDStX5d1PcxcVX-LnOl5NvGJcoibHD1U1FafmoPO9spBbmhwSJ_smiLKIllhCnT_9U5PbGDlvaMnj42i0erguUevQuXgm1Rpzy4QQXQQ8LBQlimF_OCs5LN-Qph33Z-XJD7cy9GFwdPaFuvEEpT70tRa2CQdHnVV6Mxinkrz3mg0QaKBFcrjRjaFFE__HCFnGrgP_m7ltw-2v2vJLFZdAAWuUs7AI71FrnwjjXb21MkpfRvrbskX6f6VhWGSUzst0Btuo7om--uLYIYZAzTEyDTue4aXUhV10tE1QYPk8ocBcggScG8J4I86_eCN6Kkip5pe4P5m0Q2edESRgUIBKM3tzhSzX4ZtWCRnlroBXlgVWm4vsuH-kevKnnxQJR_PSlfBs";
+            let headers = {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+            }
             let completed_status = "{{ \App\TodoList::STATUS_COMPLETED }}";
             let uncompleted_status = "{{ \App\TodoList::STATUS_UNCOMPLETED }}";
 
             async function totalTodo() {
-                fetch('http://127.0.0.1:8000/api/todos/total?user_id=' + user_id)
+                fetch('http://127.0.0.1:8000/api/todos/total?user_id=' + user_id + '&token=' + token, {
+                        method: 'GET',
+                        withCredentials: true,
+                        credentials: 'include',
+                        headers: headers
+                    })
                     .then(response => response.json())
                     .then(response => {
                         $('.total-todo').html(response.total);
@@ -185,7 +195,12 @@
             }
 
             async function totalUncompletedTodo() {
-                fetch('http://127.0.0.1:8000/api/todos/total_uncompleted?user_id=' + user_id)
+                fetch('http://127.0.0.1:8000/api/todos/total_uncompleted?user_id=' + user_id + '&token=' + token, {
+                            method: 'GET',
+                            withCredentials: true,
+                            credentials: 'include',
+                            headers: headers
+                        })
                     .then(response => response.json())
                     .then(response => {
                         $('.total-uncompleted-todo').html(response.total);
@@ -194,7 +209,12 @@
             }
 
             async function totalCompletedTodo() {
-                fetch('http://127.0.0.1:8000/api/todos/total_completed?user_id=' + user_id)
+                fetch('http://127.0.0.1:8000/api/todos/total_completed?user_id=' + user_id + '&token=' + token, {
+                        method: 'GET',
+                        withCredentials: true,
+                        credentials: 'include',
+                        headers: headers
+                    })
                     .then(response => response.json())
                     .then(response => {
                         $('.total-completed-todo').html(response.total);
@@ -206,8 +226,10 @@
                 let date = moment(val.created_at);
 
                 let is_complete_button = '';
-                let complete_button = `<button type="button" class="btn btn-sm btn-success btn-complete-todo" data-id="${val.id}"><i class="fas fa-check-circle"></i></button>`;
-                let uncomplete_button = `<button type="button" class="btn btn-sm btn-warning btn-uncomplete-todo" data-id="${val.id}"><i class="fas fa-times-circle"></i></button>`;
+                let complete_button =
+                    `<button type="button" class="btn btn-sm btn-success btn-complete-todo" data-id="${val.id}"><i class="fas fa-check-circle"></i></button>`;
+                let uncomplete_button =
+                    `<button type="button" class="btn btn-sm btn-warning btn-uncomplete-todo" data-id="${val.id}"><i class="fas fa-times-circle"></i></button>`;
 
                 if (val.is_complete == completed_status) {
                     is_complete_button = uncomplete_button;
@@ -239,24 +261,29 @@
             }
 
             function fetchAllTodos() {
-                fetch("http://127.0.0.1:8000/api/todos?user_id="+user_id+"&token=23423")
-                .then(response => response.json())
-                .then(response => {
-                    let card = '';
-                    let section_completed = $('.completed-todo');
-                    let section_uncompleted = $('.uncompleted-todo');
-                    section_completed.html('');
-                    section_uncompleted.html('');
-                    // section_completed.addClass('d-none');
-                    response.todos.forEach(val => {
-                        card = todoCard(val);
-                        if (val.is_complete == completed_status) {
-                            section_completed.prepend(card);
-                        } else {
-                            section_uncompleted.prepend(card);
-                        }
+                fetch("http://127.0.0.1:8000/api/todos?user_id=" + user_id + '&token=' + token, {
+                        method: 'GET',
+                        withCredentials: true,
+                        credentials: 'include',
+                        headers: headers
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+                        let card = '';
+                        let section_completed = $('.completed-todo');
+                        let section_uncompleted = $('.uncompleted-todo');
+                        section_completed.html('');
+                        section_uncompleted.html('');
+                        // section_completed.addClass('d-none');
+                        response.todos.forEach(val => {
+                            card = todoCard(val);
+                            if (val.is_complete == completed_status) {
+                                section_completed.prepend(card);
+                            } else {
+                                section_uncompleted.prepend(card);
+                            }
+                        });
                     });
-                });
             }
 
             // run functions
@@ -286,7 +313,7 @@
                 let body = $('#body');
                 let body_value = body.val();
 
-                if(body.summernote('isEmpty')) {
+                if (body.summernote('isEmpty')) {
                     toastr.error('Write something before submit!', 'Failed');
                     return false;
                 }
@@ -298,28 +325,28 @@
                 });
 
                 $.ajax({
-                    type: "POST",
-                    url: "http://127.0.0.1:8000/api/todos/store",
-                    data: {
-                        body: body_value,
-                        user_id: user_id,
-                    },
-                    beforeSend: () => {
-                        btn_store.addClass("disabled btn-progress");
-                    }
-                }).done((response, textStatus) => {
-                    totalTodo();
-                    totalUncompletedTodo();
-                    // add into list
-                    let cards = todoCard(response.todo);
-                    $('#todo-list-content div.uncompleted-todo').prepend(cards);
-                    body.summernote('reset');
-                    toastr.success(response.message, 'Success');
-                }).fail(ajaxFailHandler)
-                .always(response => {
-                    btn_store.removeClass("disabled btn-progress");
-                    btn_store.html(text_btn_store);
-                });
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/api/todos/store",
+                        data: {
+                            body: body_value,
+                            user_id: user_id,
+                        },
+                        beforeSend: () => {
+                            btn_store.addClass("disabled btn-progress");
+                        }
+                    }).done((response, textStatus) => {
+                        totalTodo();
+                        totalUncompletedTodo();
+                        // add into list
+                        let cards = todoCard(response.todo);
+                        $('#todo-list-content div.uncompleted-todo').prepend(cards);
+                        body.summernote('reset');
+                        toastr.success(response.message, 'Success');
+                    }).fail(ajaxFailHandler)
+                    .always(response => {
+                        btn_store.removeClass("disabled btn-progress");
+                        btn_store.html(text_btn_store);
+                    });
             });
 
             $(document).on('click', '.btn-complete-todo', function(e) {
@@ -337,26 +364,26 @@
                 });
 
                 $.ajax({
-                    type: "POST",
-                    url: "http://127.0.0.1:8000/api/todos/" + id + "/complete",
-                    data: {
-                        _method: 'PUT',
-                    },
-                    beforeSend: () => {
-                        btn.addClass("disabled btn-progress");
-                    }
-                }).done((response, textStatus) => {
-                    totalTodo();
-                    totalCompletedTodo();
-                    totalUncompletedTodo();
-                    toastr.success(response.message, 'Success');
-                    // refresh todo list
-                    fetchAllTodos();
-                }).fail(ajaxFailHandler)
-                .always(response => {
-                    btn.removeClass("disabled btn-progress");
-                    btn.html(text_btn);
-                });
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/api/todos/" + id + "/complete",
+                        data: {
+                            _method: 'PUT',
+                        },
+                        beforeSend: () => {
+                            btn.addClass("disabled btn-progress");
+                        }
+                    }).done((response, textStatus) => {
+                        totalTodo();
+                        totalCompletedTodo();
+                        totalUncompletedTodo();
+                        toastr.success(response.message, 'Success');
+                        // refresh todo list
+                        fetchAllTodos();
+                    }).fail(ajaxFailHandler)
+                    .always(response => {
+                        btn.removeClass("disabled btn-progress");
+                        btn.html(text_btn);
+                    });
             });
 
             $(document).on('click', '.btn-uncomplete-todo', function(e) {
@@ -374,37 +401,38 @@
                 });
 
                 $.ajax({
-                    type: "POST",
-                    url: "http://127.0.0.1:8000/api/todos/" + id + "/uncomplete",
-                    data: {
-                        _method: 'PUT',
-                    },
-                    beforeSend: () => {
-                        btn.addClass("disabled btn-progress");
-                    }
-                }).done((response, textStatus) => {
-                    totalTodo();
-                    totalCompletedTodo();
-                    totalUncompletedTodo();
-                    toastr.success(response.message, 'Success');
-                    // refresh todo list
-                    fetchAllTodos();
-                }).fail(ajaxFailHandler)
-                .always(response => {
-                    btn.removeClass("disabled btn-progress");
-                    btn.html(text_btn);
-                });
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/api/todos/" + id + "/uncomplete",
+                        data: {
+                            _method: 'PUT',
+                        },
+                        beforeSend: () => {
+                            btn.addClass("disabled btn-progress");
+                        }
+                    }).done((response, textStatus) => {
+                        totalTodo();
+                        totalCompletedTodo();
+                        totalUncompletedTodo();
+                        toastr.success(response.message, 'Success');
+                        // refresh todo list
+                        fetchAllTodos();
+                    }).fail(ajaxFailHandler)
+                    .always(response => {
+                        btn.removeClass("disabled btn-progress");
+                        btn.html(text_btn);
+                    });
             });
 
             $(document).on('click', '.btn-edit-todo', function(e) {
                 e.preventDefault();
                 let id = $(this).attr('data-id');
-                fetch("http://127.0.0.1:8000/api/todos/" + id + "/specific-show?user_id=" + user_id + "&token=" + token)
-                .then(response => response.json())
-                .then(response => {
-                    $("#edit_todo_id").val(response.todo.id);
-                    $("#edit_body").summernote('code',response.todo.body);
-                });
+                fetch("http://127.0.0.1:8000/api/todos/" + id + "/specific-show?user_id=" + user_id +
+                        "&token=" + token)
+                    .then(response => response.json())
+                    .then(response => {
+                        $("#edit_todo_id").val(response.todo.id);
+                        $("#edit_body").summernote('code', response.todo.body);
+                    });
 
                 $('#editTodoModal').modal('show');
             });
@@ -418,11 +446,11 @@
                 let id = $("#edit_todo_id").val();
                 let body = $("#edit_body");
 
-                if(body.summernote('isEmpty')) {
+                if (body.summernote('isEmpty')) {
                     toastr.error('Write something before submit!', 'Failed');
                     return false;
                 }
-                
+
                 let body_value = body.summernote("code");
 
                 $.ajaxSetup({
@@ -432,24 +460,25 @@
                 });
 
                 $.ajax({
-                    type: "POST",
-                    url: "http://127.0.0.1:8000/api/todos/" + id + "/update?user_id=" + user_id + "&token=" + token,
-                    data: {
-                        _method: 'PUT',
-                        body:body_value,
-                    },
-                    beforeSend: () => {
-                        btn.addClass("disabled btn-progress");
-                    }
-                }).done((response, textStatus) => {
-                    fetchAllTodos();
-                    toastr.success(response.message, 'Success');
-                    $('#editTodoModal').modal('hide');
-                }).fail(ajaxFailHandler)
-                .always(response => {
-                    btn.removeClass("disabled btn-progress");
-                    btn.html(text_btn);
-                });
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/api/todos/" + id + "/update?user_id=" + user_id +
+                            "&token=" + token,
+                        data: {
+                            _method: 'PUT',
+                            body: body_value,
+                        },
+                        beforeSend: () => {
+                            btn.addClass("disabled btn-progress");
+                        }
+                    }).done((response, textStatus) => {
+                        fetchAllTodos();
+                        toastr.success(response.message, 'Success');
+                        $('#editTodoModal').modal('hide');
+                    }).fail(ajaxFailHandler)
+                    .always(response => {
+                        btn.removeClass("disabled btn-progress");
+                        btn.html(text_btn);
+                    });
             });
 
             $(document).on('click', '.btn-delete-todo', function(e) {
@@ -467,30 +496,28 @@
                 });
 
                 $.ajax({
-                    type: "POST",
-                    url: "http://127.0.0.1:8000/api/todos/" + id + "/destroy",
-                    data: {
-                        _method: 'DELETE',
-                    },
-                    beforeSend: () => {
-                        btn_delete.addClass("disabled btn-progress");
-                    }
-                }).done((response, textStatus) => {
-                    totalTodo();
-                    totalCompletedTodo();
-                    totalUncompletedTodo();
-                    toastr.success(response.message, 'Success');
-                    // remove from list
-                    $(this).closest('div.col-12').remove();
-                }).fail(ajaxFailHandler)
-                .always(response => {
-                    btn_delete.removeClass("disabled btn-progress");
-                    btn_delete.html(text_btn_delete);
-                });
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/api/todos/" + id + "/destroy",
+                        data: {
+                            _method: 'DELETE',
+                        },
+                        beforeSend: () => {
+                            btn_delete.addClass("disabled btn-progress");
+                        }
+                    }).done((response, textStatus) => {
+                        totalTodo();
+                        totalCompletedTodo();
+                        totalUncompletedTodo();
+                        toastr.success(response.message, 'Success');
+                        // remove from list
+                        $(this).closest('div.col-12').remove();
+                    }).fail(ajaxFailHandler)
+                    .always(response => {
+                        btn_delete.removeClass("disabled btn-progress");
+                        btn_delete.html(text_btn_delete);
+                    });
             });
 
         });
-
     </script>
-
 @endsection
