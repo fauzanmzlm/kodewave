@@ -1,6 +1,5 @@
 <?php
 
-use App\TodoList;
 use App\User;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
@@ -18,39 +17,13 @@ class UsersTableSeeder extends Seeder
         // init faker
         $faker = Faker::create();
 
-        // // register admin
-        // User::create([
-        //     'name' => $faker->name,
-        //     'email' => $faker->email,
-        //     'password' => Hash::make('password'),
-        //     'role' => User::ROLE_ADMIN,
-        // ]);
-
-        // // register user
-        // User::create([
-        //     'name' => $faker->name,
-        //     'email' => $faker->email,
-        //     'password' => Hash::make('password'),
-        //     'role' => User::ROLE_USER,
-        // ]);
-
-        // // seed todolist
-        // $statuses = User::statuses();
-        // $sar = array_rand($statuses);
-        // $rsar = $statuses[$sar];
-        // for($i=0;$i<10;$i++) {
-        //     TodoList::create([
-        //         'user_id' => User::inRandomOrder()->first()->id,
-        //         'body' => $faker->sentence(5),
-        //         'is_complete' => $faker->sentence(5),
-        //     ]);
-        // }
+        $admin_role = User::ROLE_ADMIN;
 
         for($i=0;$i<20;$i++) {
             $user = User::create([
                 'name' => $faker->name,
                 'email' => $faker->safeEmail,
-                'role' => 'Administrator',
+                'role' => $admin_role,
                 'password' => Hash::make('password'),
             ]);
 
