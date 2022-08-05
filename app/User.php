@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -83,5 +84,14 @@ class User extends Authenticatable
     public function scopeTotalUser($query)
     {
         return $query->where('role', self::ROLE_USER)->count();
+    }
+
+    public static function isAdmin()
+    {
+        if (Auth::user()->role == self::ROLE_ADMIN) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

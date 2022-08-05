@@ -4,77 +4,205 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTodoRequest;
+use App\Http\Requests\UpdateTodoRequest;
 use App\TodoList;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TodoListController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $todoLists = TodoList::latest()->paginate(6);
-        return response()->json([
-            "response" => [
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
                 "status"    => 200,
-                "message"   => "Todo list successfully retrieved"
-            ],
-            "todos" => $todoLists
-        ], 200);
-    }
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
 
-    public function total(Request $request)
-    {
-        $user_id = $request->user_id;
-        $todoListsTotal = TodoList::where('user_id', $user_id)->count();
-        return response()->json([
-            "response" => [
-                "status"    => 200,
-                "message"   => "Todo list successfully retrieved"
-            ],
-            "total" => $todoListsTotal
-        ], 200);
-    }
+        DB::beginTransaction();
 
-    public function totalUncompleted(Request $request)
-    {
-        $user_id = $request->user_id;
-        $status = TodoList::STATUS_UNCOMPLETED;
-        $todoListsTotal = TodoList::where('user_id', $user_id)->where('is_complete', $status)->count();
-        return response()->json([
-            "response" => [
-                "status"    => 200,
-                "message"   => "Todo list successfully retrieved"
-            ],
-            "total" => $todoListsTotal
-        ], 200);
-    }
+        try {
 
-    public function totalCompleted(Request $request)
-    {
-        $user_id = $request->user_id;
-        $status = TodoList::STATUS_COMPLETED;
-        $todoListsTotal = TodoList::where('user_id', $user_id)->where('is_complete', $status)->count();
-        return response()->json([
-            "response" => [
-                "status"    => 200,
-                "message"   => "Todo list successfully retrieved"
-            ],
-            "total" => $todoListsTotal
-        ], 200);
+            $user_id = $request->user_id;
+            $todoLists = TodoList::where('user_id', $user_id)->latest()->get();
+            
+            DB::commit();
+
+            $notification = [
+                "response" => [
+                    "status"    => 200,
+                    "message"   => "Todo list successfully retrieved"
+                ],
+                "todos" => $todoLists
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get total todo.
      *
+     * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function total(Request $request)
     {
-        //
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $user_id = $request->user_id;
+            $todoListsTotal = TodoList::where('user_id', $user_id)->count();
+
+            DB::commit();
+
+            $notification = [
+                "response" => [
+                    "status"    => 200,
+                    "message"   => "Total todo successfully retrieved"
+                ],
+                "total" => $todoListsTotal
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
+    }
+
+    /**
+     * Get total uncomplete todo.
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function totalUncompleted(Request $request)
+    {
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $user_id = $request->user_id;
+            $status = TodoList::STATUS_UNCOMPLETED;
+            $todoListsTotal = TodoList::where('user_id', $user_id)->where('is_complete', $status)->count();
+
+            DB::commit();
+
+            $notification = [
+                "response" => [
+                    "status"    => 200,
+                    "message"   => "Total uncompleted todo successfully retrieved"
+                ],
+                "total" => $todoListsTotal
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
+    }
+
+    /**
+     * Get total complete todo.
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function totalCompleted(Request $request)
+    {
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $user_id = $request->user_id;
+            $status = TodoList::STATUS_COMPLETED;
+            $todoListsTotal = TodoList::where('user_id', $user_id)->where('is_complete', $status)->count();
+
+            DB::commit();
+
+            $notification = [
+                "response" => [
+                    "status"    => 200,
+                    "message"   => "Total completed todo successfully retrieved"
+                ],
+                "total" => $todoListsTotal
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 
     /**
@@ -85,62 +213,81 @@ class TodoListController extends Controller
      */
     public function store(StoreTodoRequest $request)
     {
-        $todo = TodoList::create([
-            'body' => $request->body,
-            'user_id' => $request->user_id,
-            'is_complete' => 2,
-        ]);
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
 
-        return response()->json([
-            'message' => 'Todo successfully added!',
-            'todo' => $todo,
-        ]);
+        DB::beginTransaction();
+
+        try {
+
+            $todo = TodoList::create([
+                'body' => $request->body,
+                'user_id' => $request->user_id,
+            ]);
+
+            DB::commit();
+
+            $notification = [
+                'status' => 200,
+                'message' => 'Todo successfully added',
+                'todo' => $todo,
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $user_id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show($id)
     {
-        if (request()->has('user_id') && request()->has('token')) {
-
-            $todoLists = TodoList::where('user_id', request()->user_id)->latest()->get();
-
-            return response()->json([
-                "todos" => $todoLists,
-                "status"    => 200,
-                "message"   => "Todo list successfully retrieved"
-            ], 200);
-        } else {
+        if (!request()->has('user_id') || !request()->has('token')) {
             return response()->json([
                 "status"    => 200,
-                "message"   => "Make sure you provide paramter user_id and token."
+                "message"   => "Make sure you provide paramter user id and token."
             ], 200);
         }
-        
-    }
 
-    public function specificShow($id)
-    {
-        if (request()->has('user_id') && request()->has('token')) {
+        try {
 
-            $todo = TodoList::find($id);
+            $todo = TodoList::findOrFail($id);
 
             return response()->json([
+                "status"    => 200,
+                "message"   => "Todo successfully retrieved",
                 "todo" => $todo,
-                "status"    => 200,
-                "message"   => "Todo successfully retrieved"
             ], 200);
-        } else {
-            return response()->json([
-                "status"    => 200,
-                "message"   => "Make sure you provide paramter user_id and token."
-            ], 200);
-        }
         
+        } catch(\Exception $e) {
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 
     /**
@@ -151,53 +298,178 @@ class TodoListController extends Controller
      */
     public function edit($id)
     {
-        //
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
+
+        try {
+
+            $todo = TodoList::findOrFail($id);
+
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Todo successfully retrieved",
+                "todo" => $todo,
+            ], 200);
+        
+        } catch(\Exception $e) {
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\StoreTodoRequest  $request
+     * @param  \App\Http\Requests\UpdateTodoRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreTodoRequest $request, $id)
+    public function update(UpdateTodoRequest $request, $id)
     {
-        $todo = TodoList::find($id);
-        $todo->update([
-            'body' => $request->body
-        ]);
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
 
-        return response()->json([
-            "status"    => 200,
-            "message"   => "Todo successfully updated!"
-        ], 200);
+        DB::beginTransaction();
+
+        try {
+
+            $todo = TodoList::findOrFail($id);
+
+            $todo->update([
+                'body' => $request->body,
+            ]);
+
+            DB::commit();
+
+            $notification = [
+                'status' => 200,
+                'message' => 'Todo successfully updated',
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 
+    /**
+     * Update todo status to complete.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function complete($id)
     {
-        $todo = TodoList::find($id);
-        $todo->update([
-            'is_complete' => TodoList::STATUS_COMPLETED
-        ]);
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
 
-        return response()->json([
-            "status"    => 200,
-            "message"   => "Well done for completed your todo!"
-        ], 200);
+        DB::beginTransaction();
+
+        try {
+
+            $todo = TodoList::findOrFail($id);
+
+            $todo->update([
+                'is_complete' => TodoList::STATUS_COMPLETED
+            ]);
+
+            DB::commit();
+
+            $notification = [
+                'status' => 200,
+                'message' => 'Todo status successfully updated',
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 
+    /**
+     * Update todo status to uncomplete.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function uncomplete($id)
     {
-        $todo = TodoList::find($id);
-        $todo->update([
-            'is_complete' => TodoList::STATUS_UNCOMPLETED
-        ]);
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
 
-        return response()->json([
-            "status"    => 200,
-            "message"   => "Todo status has been updated!"
-        ], 200);
+        DB::beginTransaction();
+
+        try {
+
+            $todo = TodoList::findOrFail($id);
+
+            $todo->update([
+                'is_complete' => TodoList::STATUS_UNCOMPLETED
+            ]);
+
+            DB::commit();
+
+            $notification = [
+                'status' => 200,
+                'message' => 'Todo status successfully updated',
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 
     /**
@@ -208,12 +480,40 @@ class TodoListController extends Controller
      */
     public function destroy($id)
     {
-        $todo = TodoList::find($id);
-        $todo->delete();
+        if (!request()->has('user_id') || !request()->has('token')) {
+            return response()->json([
+                "status"    => 200,
+                "message"   => "Make sure you provide paramter user id and token."
+            ], 200);
+        }
 
-        return response()->json([
-            "status"    => 200,
-            "message"   => "Todo list successfully deleted"
-        ], 200);
+        DB::beginTransaction();
+
+        try {
+
+            $todo = TodoList::findOrFail($id);
+            $todo->delete();
+
+            DB::commit();
+
+            $notification = [
+                'status' => 200,
+                'message' => 'Todo successfully deleted',
+            ];
+            
+            return response()->json($notification, 200);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+            ];
+            
+            return response()->json($notification);
+        }
     }
 }

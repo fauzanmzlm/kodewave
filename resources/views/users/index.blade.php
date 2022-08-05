@@ -71,7 +71,7 @@
                                                 <br>
                                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary mb-1"><i class="fas fa-edit"></i> Edit</a>
                                                 <br>
-                                                <form action="{{ route('users.destroy', $user->id) }}">
+                                                <form action="{{ route('users.destroy', $user->id) }}" method="post">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>

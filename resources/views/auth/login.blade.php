@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Login &mdash; MyTodo</title>
+    <title>Login &mdash; {{ env('APP_NAME') }}</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}" />
@@ -20,7 +20,7 @@
 
 
     <!-- Template CSS -->
-    <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('/css/stisla.css') }}" rel="stylesheet">
 
 </head>
 
@@ -105,7 +105,7 @@
                             Don't have an account? <a href="{{ route('register') }}">Create One</a>
                         </div>
                         <div class="simple-footer">
-                            @include('partials.copyright') <a href="{{ env('APP_URL') }}">{{ env('APP_NAME') }}</a>
+                            @include('partials.copyright')
                         </div>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
 
 
     <!-- Template JS File -->
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="{{ mix('/js/stisla.js') }}"></script>
 
 
 </body>

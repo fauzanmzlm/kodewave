@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Register &mdash; MyTodo</title>
+    <title>Register &mdash; {{ env('APP_NAME') }}</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}" />
@@ -20,7 +20,7 @@
 
 
     <!-- Template CSS -->
-    <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('/css/stisla.css') }}" rel="stylesheet">
 
 </head>
 
@@ -140,7 +140,7 @@
 
 
     <!-- Template JS File -->
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="{{ mix('/js/stisla.js') }}"></script>
 
 
 </body>

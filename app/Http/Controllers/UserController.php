@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = User::roles();
+
         return view('users.create', compact('roles'));
     }
 
@@ -61,8 +63,8 @@ class UserController extends Controller
             DB::commit();
 
             $notification = [
-                'message' => 'User successfully created!',
-                'alert_type' => 'error'
+                'message' => 'User successfully created',
+                'alert_type' => 'success'
             ];
 
             return back()->with($notification);
@@ -85,45 +87,107 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        $roles = $user->roles();
+
+        return view('users.show', compact('user', 'roles'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        //
+        $roles = $user->roles();
+
+        return view('users.edit', compact('user', 'roles'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Http\Requests\UpdateUserRequest  $request
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role' => $request->role,
+            ]);
+
+            DB::commit();
+
+            $notification = [
+                'message' => 'User successfully updated',
+                'alert_type' => 'success'
+            ];
+            
+            return back()->with($notification);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+                'alert_type' => 'error'
+            ];
+            
+            return back()->with($notification);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+
+            $user->delete();
+
+            DB::commit();
+
+            $notification = [
+                'message' => 'User successfully deleted',
+                'alert_type' => 'success'
+            ];
+            
+            return back()->with($notification);
+
+        } catch(\Exception $e) {
+
+            DB::rollback();
+
+            $message = str_replace(array("\r", "\n","'","`"), ' ', $e->getMessage());
+
+            $notification = [
+                'message' => $message,
+                'alert_type' => 'error'
+            ];
+            
+            return back()->with($notification);
+        }
     }
 }

@@ -19,7 +19,7 @@ mix.styles([
     'public/stisla/assets/css/components.css',
     'public/stisla/modules/jquery-selectric/selectric.css',
     'public/stisla/modules/toastr/toastr-2.1.4/build/toastr.css',
-], 'public/css/app.css').version();
+], 'public/css/stisla.css').version();
 
 mix.scripts([
     'public/stisla/assets/js/stisla.js',
@@ -28,4 +28,4 @@ mix.scripts([
     'public/stisla/modules/jquery-selectric/jquery.selectric.min.js',
     'public/stisla/modules/toastr/toastr-2.1.4/build/toastr.min.js',
     'public/js/helpers.js',
-], 'public/js/app.js').version();
+], 'public/js/stisla.js').version();

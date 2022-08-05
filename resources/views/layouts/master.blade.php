@@ -21,7 +21,8 @@
     
 
     <!-- Template CSS -->
-    <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('/css/stisla.css') }}" rel="stylesheet">
+    {{-- <link href="{{ mix('/css/app.css') }}" rel="stylesheet"> --}}
 
     <style>
         .line-todo {
@@ -84,7 +85,30 @@
     
 
     <!-- Template JS File -->
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="{{ mix('/js/stisla.js') }}"></script>
+    {{-- <script defer src="{{ mix('/js/app.js') }}"></script> --}}
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            @if (session()->has('alert_type') && session()->has('message'))
+
+                @if (session()->get('alert_type') == 'success')
+                    toastr.success("{{ session()->get('message') }}",'Success');
+                @elseif (session()->get('alert_type') == 'error')
+                    toastr.error("{{ session()->get('message') }}",'Error');
+                @elseif (session()->get('alert_type') == 'warning')
+                    toastr.warning("{{ session()->get('message') }}",'Warning');
+                @elseif (session()->get('alert_type') == 'info')
+                    toastr.info("{{ session()->get('message') }}",'Info');
+                @endif
+
+            @endif
+
+        });
+
+    </script>
 
     <!-- Page Specific JS File -->
     @yield('scripts')

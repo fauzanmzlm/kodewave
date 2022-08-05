@@ -10,6 +10,7 @@
             <h1>Dashboard</h1>
         </div>
         <div class="row">
+            @if (auth()->user()->isAdmin())
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-primary">
@@ -25,6 +26,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-warning">
@@ -70,7 +72,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-3 col-md-12 col-12 col-sm-12">
+            <div class="col-lg-4 col-md-12 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Create Todo</h4>
@@ -90,7 +92,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-md-12 col-12 col-sm-12">
+            <div class="col-lg-8 col-md-12 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Todo Lists</h4>
@@ -108,29 +110,6 @@
                     <div class="card-body" id="todo-list-content">
                         <div class="uncompleted-todo"></div>
                         <div class="completed-todo"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-12 col-12 col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Share Your Todo List (API) &mdash; <i class="far fa-smile" style="font-size: 18px;"></i></h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-primary">Generate My API</button>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <input type="text" name="name" class="form-control" placeholder="Search user name"
-                                    aria-label="" value="https:dasdsadasdsa">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-primary" type="button">
-                                        <i class="fas fa-copy"></i> Copy
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -167,27 +146,17 @@
 @endsection
 
 @section('scripts')
+    
     <script type="text/javascript">
+
         $(document).ready(function() {
 
-            let user_id = "{{ auth()->user()->id }}";
-            let token =
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiM2VkMjNkMjk3YmYyNmNhZmE5NDZlMjhjNjA4NjZhMDUwZDk1ZWUyYzVkNjIyYWYyOTFmYjg4ZjExZDBlNzdhZjY3YWM5M2VkMGJlZmUwYjgiLCJpYXQiOjE2NTkzOTY4NDEsIm5iZiI6MTY1OTM5Njg0MSwiZXhwIjoxNjkwOTMyODQwLCJzdWIiOiIyMCIsInNjb3BlcyI6W119.cw-KaOVPic7zOLAU7xrJCFTvegB6JT2D-PPjDvAK5Jju3p_ZlNF5jCGcJhcuzlxJZS6Qo9G-tKmFlNvFEvecrJYQK_90qf08pyoFbNc_NYWLWSUe_Ncv0hXtT_7_V6UkWhe59q2Kla-BWpaQt0EmLvP_yShyI2ogkHvMK9SSQsRGIlsK0qUV11hXiNUs1JeMylULFHMRFlU1mVzrOU4JplBAtzsZ7ZUplkB1GspDH5sWq8hmgv7zYYhVhEew2dmOmbYCJ26rNXd95O2wv2wneyrxZFt0FMarAx2_1WPDStX5d1PcxcVX-LnOl5NvGJcoibHD1U1FafmoPO9spBbmhwSJ_smiLKIllhCnT_9U5PbGDlvaMnj42i0erguUevQuXgm1Rpzy4QQXQQ8LBQlimF_OCs5LN-Qph33Z-XJD7cy9GFwdPaFuvEEpT70tRa2CQdHnVV6Mxinkrz3mg0QaKBFcrjRjaFFE__HCFnGrgP_m7ltw-2v2vJLFZdAAWuUs7AI71FrnwjjXb21MkpfRvrbskX6f6VhWGSUzst0Btuo7om--uLYIYZAzTEyDTue4aXUhV10tE1QYPk8ocBcggScG8J4I86_eCN6Kkip5pe4P5m0Q2edESRgUIBKM3tzhSzX4ZtWCRnlroBXlgVWm4vsuH-kevKnnxQJR_PSlfBs";
-            let headers = {
-                'Authorization': `Bearer ${token}`,
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data'
-            }
             let completed_status = "{{ \App\TodoList::STATUS_COMPLETED }}";
             let uncompleted_status = "{{ \App\TodoList::STATUS_UNCOMPLETED }}";
 
             async function totalTodo() {
-                fetch('http://127.0.0.1:8000/api/todos/total?user_id=' + user_id + '&token=' + token, {
-                        method: 'GET',
-                        withCredentials: true,
-                        credentials: 'include',
-                        headers: headers
-                    })
+                const csrfToken = document.head.querySelector("[name~=csrf-token][content]").content;
+                fetch('http://127.0.0.1:8000/todos/total')
                     .then(response => response.json())
                     .then(response => {
                         $('.total-todo').html(response.total);
@@ -195,12 +164,7 @@
             }
 
             async function totalUncompletedTodo() {
-                fetch('http://127.0.0.1:8000/api/todos/total_uncompleted?user_id=' + user_id + '&token=' + token, {
-                            method: 'GET',
-                            withCredentials: true,
-                            credentials: 'include',
-                            headers: headers
-                        })
+                fetch('http://127.0.0.1:8000/todos/total_uncompleted')
                     .then(response => response.json())
                     .then(response => {
                         $('.total-uncompleted-todo').html(response.total);
@@ -209,12 +173,7 @@
             }
 
             async function totalCompletedTodo() {
-                fetch('http://127.0.0.1:8000/api/todos/total_completed?user_id=' + user_id + '&token=' + token, {
-                        method: 'GET',
-                        withCredentials: true,
-                        credentials: 'include',
-                        headers: headers
-                    })
+                fetch('http://127.0.0.1:8000/todos/total_completed')
                     .then(response => response.json())
                     .then(response => {
                         $('.total-completed-todo').html(response.total);
@@ -260,13 +219,9 @@
                 `;
             }
 
+            // retrieve all todos
             function fetchAllTodos() {
-                fetch("http://127.0.0.1:8000/api/todos?user_id=" + user_id + '&token=' + token, {
-                        method: 'GET',
-                        withCredentials: true,
-                        credentials: 'include',
-                        headers: headers
-                    })
+                fetch("http://127.0.0.1:8000/todos")
                     .then(response => response.json())
                     .then(response => {
                         let card = '';
@@ -304,6 +259,7 @@
                 $('.completed-todo').addClass('d-none');
             });
 
+            // add todo
             $(document).on('click', '.btn-submit-todo', function(e) {
                 e.preventDefault();
 
@@ -326,10 +282,9 @@
 
                 $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:8000/api/todos/store",
+                        url: "http://127.0.0.1:8000/todos/store",
                         data: {
                             body: body_value,
-                            user_id: user_id,
                         },
                         beforeSend: () => {
                             btn_store.addClass("disabled btn-progress");
@@ -349,6 +304,7 @@
                     });
             });
 
+            // complete todo
             $(document).on('click', '.btn-complete-todo', function(e) {
                 e.preventDefault();
 
@@ -365,7 +321,7 @@
 
                 $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:8000/api/todos/" + id + "/complete",
+                        url: "http://127.0.0.1:8000/todos/" + id + "/complete",
                         data: {
                             _method: 'PUT',
                         },
@@ -386,6 +342,7 @@
                     });
             });
 
+            // uncomplete todo
             $(document).on('click', '.btn-uncomplete-todo', function(e) {
                 e.preventDefault();
 
@@ -402,7 +359,7 @@
 
                 $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:8000/api/todos/" + id + "/uncomplete",
+                        url: "http://127.0.0.1:8000/todos/" + id + "/uncomplete",
                         data: {
                             _method: 'PUT',
                         },
@@ -423,11 +380,11 @@
                     });
             });
 
+            // edit todo
             $(document).on('click', '.btn-edit-todo', function(e) {
                 e.preventDefault();
                 let id = $(this).attr('data-id');
-                fetch("http://127.0.0.1:8000/api/todos/" + id + "/specific-show?user_id=" + user_id +
-                        "&token=" + token)
+                fetch("http://127.0.0.1:8000/todos/" + id + "/edit")
                     .then(response => response.json())
                     .then(response => {
                         $("#edit_todo_id").val(response.todo.id);
@@ -437,6 +394,7 @@
                 $('#editTodoModal').modal('show');
             });
 
+            // update todo
             $(document).on('click', '.btn-save-todo', function(e) {
                 e.preventDefault();
 
@@ -461,8 +419,7 @@
 
                 $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:8000/api/todos/" + id + "/update?user_id=" + user_id +
-                            "&token=" + token,
+                        url: "http://127.0.0.1:8000/todos/" + id + "/update",
                         data: {
                             _method: 'PUT',
                             body: body_value,
@@ -481,6 +438,7 @@
                     });
             });
 
+            // delete todo
             $(document).on('click', '.btn-delete-todo', function(e) {
                 e.preventDefault();
 
@@ -497,7 +455,7 @@
 
                 $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:8000/api/todos/" + id + "/destroy",
+                        url: "http://127.0.0.1:8000/todos/" + id + "/destroy",
                         data: {
                             _method: 'DELETE',
                         },
@@ -519,5 +477,7 @@
             });
 
         });
+    
     </script>
+
 @endsection
